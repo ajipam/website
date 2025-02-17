@@ -1,6 +1,6 @@
 # Company Profile
 
-Aplikasi ini dibangun menggunakan Codeigniter 3.1.11. & php 7.4.13
+Aplikasi ini dibangun menggunakan Codeigniter 3.1.11. & php 8.1.13
 
 Aplikasi ini berguna untuk profile perusahaan 
 
