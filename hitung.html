@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentasi & Wawancara Nominator AKRP</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+        body {
+            background-color: #e9ebee;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #1c3a6b;
+        }
+
+        .countdown-container {
+            background: linear-gradient(to bottom, #4b89d1, #1c3a6b);
+            border-radius: 60px;
+            padding: 30px 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border: 5px solid #f7c04a;
+            width: 90%;
+            max-width: 550px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Input Waktu */
+        .input-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .input-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+        }
+
+        .input-block input {
+            width: 70px;
+            padding: 8px;
+            font-size: 1.5rem;
+            text-align: center;
+            border: 2px solid #f7c04a;
+            border-radius: 10px;
+            background-color: #e9ebee;
+            color: #1c3a6b;
+            font-weight: bold;
+        }
+
+        .input-block label {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+        
+        /* Tampilan Timer */
+        #timer_display {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .time-block .number {
+            font-size: 5rem;
+            font-weight: 700;
+            color: #f7c04a;
+            line-height: 1;
+        }
+
+        .time-block .label {
+            font-size: 1rem;
+            color: #e9ebee;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        /* Tombol Kontrol */
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .controls button {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #startBtn { background-color: #4CAF50; color: white; }
+        #pauseBtn { background-color: #f7a24a; color: white; }
+        #resetBtn { background-color: #f44336; color: white; }
+        
+        .controls button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        #expired-message {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #f7c04a;
+        }
+
+        /* Hide elements by default */
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .time-block .number { font-size: 3rem; }
+            .input-block input { width: 50px; font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="countdown-container">
+        <h1>Presentasi & Wawancara Nominator AKRP 2025</h1>
+
+        <div id="input_wrapper">
+            <div class="input-container">
+                <div class="input-block">
+                    <input type="number" id="hours_input" min="0" max="99" value="0">
+                    <label>Jam</label>
+                </div>
+                <div class="input-block">
+                    <input type="number" id="minutes_input" min="0" max="59" value="10">
+                    <label>Menit</label>
+                </div>
+                <div class="input-block">
+                    <input type="number" id="seconds_input" min="0" max="59" value="0">
+                    <label>Detik</label>
+                </div>
+            </div>
+        </div>
+        
+        <div id="timer_display" class="hidden">
+            <div class="time-block">
+                <span id="hours" class="number">00</span>
+            </div>
+             <div class="time-block">
+                <span class="number">:</span>
+            </div>
+            <div class="time-block">
+                <span id="minutes" class="number">00</span>
+            </div>
+             <div class="time-block">
+                <span class="number">:</span>
+            </div>
+            <div class="time-block">
+                <span id="seconds" class="number">00</span>
+            </div>
+        </div>
+
+        <div id="expired-message" class="hidden">WAKTU HABIS!</div>
+
+        <div class="controls">
+            <button id="startBtn">Mulai</button>
+            <button id="pauseBtn" class="hidden">Jeda</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        const hoursInput = document.getElementById('hours_input');
+        const minutesInput = document.getElementById('minutes_input');
+        const secondsInput = document.getElementById('seconds_input');
+
+        const inputWrapper = document.getElementById('input_wrapper');
+        const timerDisplay = document.getElementById('timer_display');
+        const expiredMessage = document.getElementById('expired-message');
+
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+
+        let countdown;
+        let timeInSeconds;
+
+        function startTimer() {
+            // Sembunyikan input, tampilkan display timer
+            inputWrapper.classList.add('hidden');
+            timerDisplay.classList.remove('hidden');
+            expiredMessage.classList.add('hidden');
+
+            // Ubah tombol
+            startBtn.classList.add('hidden');
+            pauseBtn.classList.remove('hidden');
+
+            // Jalankan interval
+            countdown = setInterval(() => {
+                if (timeInSeconds <= 0) {
+                    clearInterval(countdown);
+                    timerFinished();
+                    return;
+                }
+                timeInSeconds--;
+                updateDisplay();
+            }, 1000);
+        }
+        
+        function updateDisplay() {
+            const h = Math.floor(timeInSeconds / 3600);
+            const m = Math.floor((timeInSeconds % 3600) / 60);
+            const s = timeInSeconds % 60;
+            
+            const format = (num) => num.toString().padStart(2, '0');
+
+            hoursEl.innerText = format(h);
+            minutesEl.innerText = format(m);
+            secondsEl.innerText = format(s);
+        }
+
+        function timerFinished() {
+            timerDisplay.classList.add('hidden');
+            expiredMessage.classList.remove('hidden');
+            // Anda bisa menambahkan suara di sini
+            // new Audio('path/to/sound.mp3').play();
+        }
+
+        startBtn.addEventListener('click', () => {
+            const h = parseInt(hoursInput.value) || 0;
+            const m = parseInt(minutesInput.value) || 0;
+            const s = parseInt(secondsInput.value) || 0;
+            
+            timeInSeconds = (h * 3600) + (m * 60) + s;
+
+            if (timeInSeconds > 0) {
+                startTimer();
+            }
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            clearInterval(countdown);
+            pauseBtn.classList.add('hidden');
+            startBtn.classList.remove('hidden');
+            startBtn.innerText = "Lanjutkan"; // Ubah teks tombol
+        });
+
+        resetBtn.addEventListener('click', () => {
+            clearInterval(countdown);
+            timeInSeconds = 0;
+            
+            // Kembalikan ke tampilan awal
+            timerDisplay.classList.add('hidden');
+            expiredMessage.classList.add('hidden');
+            inputWrapper.classList.remove('hidden');
+
+            // Kembalikan tombol ke kondisi awal
+            pauseBtn.classList.add('hidden');
+            startBtn.classList.remove('hidden');
+            startBtn.innerText = "Mulai";
+            
+            // Reset nilai input
+            hoursInput.value = "0";
+            minutesInput.value = "10";
+            secondsInput.value = "0";
+        });
+
+    </script>
+</body>
+</html>
